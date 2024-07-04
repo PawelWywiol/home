@@ -11,6 +11,14 @@ http:
       tls: {}
       service: proxmox
     pihole:
+      entryPoints:
+        - "https"
+      rule: "Host(`pihole.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: pihole
 
 #endregion
 #region services
@@ -19,6 +27,11 @@ http:
       loadBalancer:
         servers:
           - url: "https://192.168.0.200:8006"
+        passHostHeader: true
+    pihole:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.100"
         passHostHeader: true
 #endregion
   middlewares:
