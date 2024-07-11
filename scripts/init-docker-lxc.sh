@@ -17,3 +17,18 @@ apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docke
 # Install Portainer
 # docker volume create portainer_data
 # docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+
+useradd -m code
+groupadd docker
+usermod -aG docker code
+
+apt-get install sudo visudo -y
+
+# dpkg -S visudo
+
+echo "PATH=$PATH:/usr/sbin" >> ~/.bashrc
+
+apt-get upgrade -y
+apt-get autoremove -y
+
+# reboot
