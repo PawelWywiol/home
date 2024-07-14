@@ -1,10 +1,14 @@
 ---
 services:
   marqo:
-    image: marqo:latest
+    image: marqoai/marqo:latest
     container_name: marqo
     restart: unless-stopped
     networks:
       - frontend
     ports:
       - 8882:8882
+
+networks:
+  frontend:
+    external: true
