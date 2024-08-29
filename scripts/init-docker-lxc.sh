@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Update system
 apt-get update
 
@@ -28,8 +30,21 @@ useradd -m code
 groupadd docker
 usermod -aG docker code
 
+# Generate SSH key
+su - code <<'EOF'
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+EOF
+
 # Reset password if necessary
 # passwd code
 
 # Reboot if necessary
 # reboot
+
+# Remote access if necessary
+# remove ip from known_hosts
+# ssh-keygen -R 192.168.0.XXX
+# add key to authorized_keys
+# ssh-copy-id code@192.168.0.XXX
