@@ -17,7 +17,7 @@ apt-get update
 # Install Docker
 apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-compose -y
 
-# Install sudo
+# Install sudo if necessary
 # apt-get install sudo visudo -y
 # dpkg -S visudo
 # echo "PATH=$PATH:/usr/sbin" >> ~/.bashrc
@@ -36,15 +36,3 @@ ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 touch ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 EOF
-
-# Reset password if necessary
-# passwd code
-
-# Reboot if necessary
-# reboot
-
-# Remote access if necessary
-# remove ip from known_hosts
-# ssh-keygen -R 192.168.0.XXX
-# add key to authorized_keys
-# ssh-copy-id code@192.168.0.XXX
