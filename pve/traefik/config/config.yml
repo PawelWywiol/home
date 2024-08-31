@@ -19,6 +19,15 @@ http:
         - https-redirectscheme
       tls: {}
       service: pihole
+    wakapi:
+      entryPoints:
+        - "https"
+      rule: "Host(`wakapi.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: wakapi
     grafana:
       entryPoints:
         - "https"
@@ -41,6 +50,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.0.100"
+        passHostHeader: true
+    wakapi:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.104:3000"
         passHostHeader: true
     grafana:
       loadBalancer:
