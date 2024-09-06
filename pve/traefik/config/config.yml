@@ -37,6 +37,15 @@ http:
         - https-redirectscheme
       tls: {}
       service: grafana
+    glitchtip:
+      entryPoints:
+        - "https"
+      rule: "Host(`glitchtip.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: glitchtip
 
 #endregion
 #region services
@@ -60,6 +69,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.0.107:3000"
+        passHostHeader: true
+    glitchtip:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.108:8000"
         passHostHeader: true
 #endregion
   middlewares:
