@@ -1,6 +1,15 @@
 http:
- #region routers
+  #region routers
   routers:
+    dev:
+      entryPoints:
+        - "https"
+      rule: "Host(`dev.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: dev
     proxmox:
       entryPoints:
         - "https"
@@ -47,9 +56,14 @@ http:
       tls: {}
       service: glitchtip
 
-#endregion
-#region services
+  #endregion
+  #region services
   services:
+    dev:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.250:3000"
+        passHostHeader: true
     proxmox:
       loadBalancer:
         servers:
@@ -75,7 +89,7 @@ http:
         servers:
           - url: "http://192.168.0.105:8000"
         passHostHeader: true
-#endregion
+  #endregion
   middlewares:
     https-redirectscheme:
       redirectScheme:
@@ -97,10 +111,10 @@ http:
     default-whitelist:
       ipAllowList:
         sourceRange:
-        - "192.168.0.0/16"
+          - "192.168.0.0/16"
 
     secured:
       chain:
         middlewares:
-        - default-whitelist
-        - default-headers
+          - default-whitelist
+          - default-headers
