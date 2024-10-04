@@ -55,6 +55,15 @@ http:
         - https-redirectscheme
       tls: {}
       service: glitchtip
+    passbolt:
+      entryPoints:
+        - "https"
+      rule: "Host(`passbolt.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: passbolt
 
   #endregion
   #region services
@@ -88,6 +97,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.0.105:8000"
+        passHostHeader: true
+    passbolt:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.108"
         passHostHeader: true
   #endregion
   middlewares:
