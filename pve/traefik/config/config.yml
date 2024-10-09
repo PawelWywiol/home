@@ -28,6 +28,15 @@ http:
         - https-redirectscheme
       tls: {}
       service: pihole
+    portainer:
+      entryPoints:
+        - "https"
+      rule: "Host(`portainer.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: portainer
     wakapi:
       entryPoints:
         - "https"
@@ -82,6 +91,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.0.100"
+        passHostHeader: true
+    portainer:
+      loadBalancer:
+        servers:
+          - url: "https://192.168.0.102:9443"
         passHostHeader: true
     wakapi:
       loadBalancer:
