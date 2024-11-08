@@ -73,6 +73,24 @@ http:
         - https-redirectscheme
       tls: {}
       service: passbolt
+    omv:
+      entryPoints:
+        - "https"
+      rule: "Host(`omv.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: omv
+    nextcloud:
+      entryPoints:
+        - "https"
+      rule: "Host(`nextcloud.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: nextcloud
 
   #endregion
   #region services
@@ -116,6 +134,16 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.0.108"
+        passHostHeader: true
+    omv:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.109"
+        passHostHeader: true
+    nextcloud:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.110"
         passHostHeader: true
   #endregion
   middlewares:
