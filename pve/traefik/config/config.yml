@@ -73,24 +73,24 @@ http:
         - https-redirectscheme
       tls: {}
       service: passbolt
-    omv:
+    samba:
       entryPoints:
         - "https"
-      rule: "Host(`omv.local.wywiol.eu`)"
+      rule: "Host(`samba.local.wywiol.eu`)"
       middlewares:
         - default-headers
         - https-redirectscheme
       tls: {}
-      service: omv
-    nextcloud:
+      service: samba
+    romm:
       entryPoints:
         - "https"
-      rule: "Host(`nextcloud.local.wywiol.eu`)"
+      rule: "Host(`retro.local.wywiol.eu`)"
       middlewares:
         - default-headers
         - https-redirectscheme
       tls: {}
-      service: nextcloud
+      service: romm
 
   #endregion
   #region services
@@ -135,15 +135,15 @@ http:
         servers:
           - url: "http://192.168.0.108"
         passHostHeader: true
-    omv:
+    samba:
       loadBalancer:
         servers:
           - url: "http://192.168.0.109"
         passHostHeader: true
-    nextcloud:
+    romm:
       loadBalancer:
         servers:
-          - url: "http://192.168.0.110"
+          - url: "http://192.168.0.111"
         passHostHeader: true
   #endregion
   middlewares:

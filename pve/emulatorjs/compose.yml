@@ -1,0 +1,18 @@
+---
+services:
+  emulatorjs:
+    container_name: emulatorjs
+    image: lscr.io/linuxserver/emulatorjs:latest
+    ports:
+      - 80:80
+      - 3000:3000
+      - 4001:4001
+    volumes:
+      - /mnt/retro/emulatorjs/config:/config
+      - /mnt/retro/emulatorjs/data:/data
+      - /mnt/retro/roms/nes:/roms/nes:ro
+    environment:
+      - TZ=Europe/Warsaw
+      - PUID=1000
+      - PGID=1000
+    restart: unless-stopped

@@ -28,7 +28,11 @@ ssh-copy-id code@192.168.0.XXX
 
 Update your `~/.ssh/config`
 
+```shell
+code ~/.ssh/config
 ```
+
+```shell
 Host local-traefik
 HostName 192.168.0.XXX
 User code
