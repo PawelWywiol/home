@@ -38,7 +38,7 @@ WG_PEER_ALLOWED_IPS="${WG_PEER_ALLOWED_IPS:-0.0.0.0/0}"    # WireGuard peer allo
 
 # Update system and install necessary packages
 apt update && apt upgrade -y
-apt install -y curl wireguard iptables iptables-persistent 
+apt install -y curl wireguard iptables iptables-persistent
 
 apt install -y resolvconf
 

@@ -2,6 +2,8 @@
 
 USERNAME="code"
 
+echo nameserver 1.1.1.1 > /etc/resolv.conf
+
 # Update system
 apt-get update
 
