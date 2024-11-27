@@ -9,7 +9,16 @@ http:
         - default-headers
         - https-redirectscheme
       tls: {}
-      service: dev
+      service: dev3000
+    bimagopl:
+      entryPoints:
+        - "https"
+      rule: "Host(`bimago-pl.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: dev4200
     proxmox:
       entryPoints:
         - "https"
@@ -91,14 +100,37 @@ http:
         - https-redirectscheme
       tls: {}
       service: romm
+    qt:
+      entryPoints:
+        - "https"
+      rule: "Host(`qt.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: qt
+    chrome:
+      entryPoints:
+        - "https"
+      rule: "Host(`chrome.local.wywiol.eu`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: chrome
 
   #endregion
   #region services
   services:
-    dev:
+    dev3000:
       loadBalancer:
         servers:
           - url: "http://192.168.0.250:3000"
+        passHostHeader: true
+    dev4200:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.250:4200"
         passHostHeader: true
     proxmox:
       loadBalancer:
@@ -144,6 +176,16 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.0.111"
+        passHostHeader: true
+    qt:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.112:8080"
+        passHostHeader: true
+    chrome:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.112:3000"
         passHostHeader: true
   #endregion
   middlewares:

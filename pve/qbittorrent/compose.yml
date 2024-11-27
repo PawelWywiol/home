@@ -16,10 +16,10 @@ services:
     volumes:
       - ${CONFIG_PATH}:/config
       - ${DOWNLOADS_PATH}:/downloads #optional
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
+    # ports:
+    #   - 8080:8080
+    #   - 6881:6881
+    #   - 6881:6881/udp
     restart: unless-stopped
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
@@ -38,6 +38,9 @@ services:
     ports:
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
+      - 6881:6881/udp
+      - 3000:3000
+      - 3001:3001
     volumes:
       - ./gluetun:/gluetun
     env_file: .env
@@ -69,3 +72,22 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  chromium:
+    image: lscr.io/linuxserver/chromium:latest
+    container_name: chromium
+    network_mode: service:gluetun
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    env_file: .env
+    volumes:
+      - ${BROWSER_CONFIG_PATH}:/config
+    # ports:
+    #   - 3000:3000
+    #   - 3001:3001
+    shm_size: "1gb"
+    restart: unless-stopped
