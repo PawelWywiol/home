@@ -10,6 +10,7 @@ x-environment: &default-environment
   DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL}
   CELERY_WORKER_AUTOSCALE: ${CELERY_WORKER_AUTOSCALE}
   CELERY_WORKER_MAX_TASKS_PER_CHILD: ${CELERY_WORKER_MAX_TASKS_PER_CHILD}
+  CSP_DEFAULT_SRC: "self"
 
 x-depends_on: &default-depends_on
   - postgres
