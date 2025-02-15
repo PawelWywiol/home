@@ -15,6 +15,6 @@ mkdir -p $DEST_DIR
 # rsync dotfiles to destination directory
 for dotfile in "${DOTFILES[@]}"; do
   if [ -e "$dotfile" ]; then
-    rsync -avP --no-perms --no-owner --no-group "$dotfile" "$DEST_DIR"
+    rsync -avPL --no-perms --no-owner --no-group "$dotfile" "$DEST_DIR"
   fi
 done
