@@ -1,0 +1,65 @@
+---
+services:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:11.0.0
+    hostname: grafana
+    depends_on:
+      - graphite
+    links:
+      - graphite
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      # See https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_AUTH_ANONYMOUS_ENABLED=${GF_AUTH_ANONYMOUS_ENABLED}
+      - GF_USERS_ALLOW_SIGN_UP=${GF_USERS_ALLOW_SIGN_UP}
+      - GF_USERS_ALLOW_ORG_CREATE=${GF_USERS_ALLOW_ORG_CREATE}
+      - GF_INSTALL_PLUGINS=${GF_INSTALL_PLUGINS}
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=${GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH}
+    volumes:
+      - grafana:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/dashboards:/var/lib/grafana/dashboards
+    restart: always
+
+  graphite:
+    container_name: graphite
+    image: sitespeedio/graphite:1.1.10-3
+    hostname: graphite
+    ports:
+      - "2003:2003"
+      - "8080:80"
+    restart: always
+    volumes:
+      # In production, you should configure/map these to your container
+      # Make sure whisper and graphite.db/grafana.db lives outside your container
+      # https://www.sitespeed.io/documentation/sitespeed.io/graphite/#graphite-for-production-important
+      - whisper:/opt/graphite/storage/whisper
+      # Download an empty graphite.db from https://github.com/sitespeedio/sitespeed.io/tree/main/docker/graphite
+      # - /absolute/path/to/graphite/graphite.db:/opt/graphite/storage/graphite.db
+      #
+      # And put the configuration files on your server, configure them as you need
+      # Download from https://github.com/sitespeedio/docker-graphite-statsd/tree/main/conf/graphite
+      # - /absolute/path/to/graphite/conf/storage-schemas.conf:/opt/graphite/conf/storage-schemas.conf
+      # - /absolute/path/to/graphite/conf/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf
+      # - /absolute/path/to/graphite/conf/carbon.conf:/opt/graphite/conf/carbon.conf
+
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    hostname: nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - ./sitespeed-result:/usr/share/nginx/html/sitespeed-result:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: always
+
+volumes:
+  grafana:
+  whisper:

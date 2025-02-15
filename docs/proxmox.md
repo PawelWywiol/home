@@ -1,4 +1,52 @@
-# Prepare an external disk drive
+# Proxmox
+
+## Add mount points
+
+### To VM
+
+```bash
+blkid -o list
+
+qm set 109 -sata1 /dev/disk/by-uuid/XXX-UUID-HERE
+```
+
+### To LXC
+
+```bash
+nano /etc/pve/lxc/XXX.conf
+
+mp0: /mnt/source/path,mp=/mnt/destination/path
+```
+
+or
+
+```bash
+pct set 110 -mp0 volume=/mnt/source/path,mp=/mnt/destination/path
+```
+
+## Fix corrupted file system
+
+e.g. after power failure
+
+```bash
+-????????? ? ? ? ?  ? 19.bak
+```
+
+```bash
+unmount /dev/sdXY
+fsck.ext4 -y /dev/sdXY
+mount /dev/sdXY
+```
+
+or
+
+```bash
+pct stop 110
+pct fsck 110
+pct start 110
+```
+
+## Prepare an external disk drive
 
 1. Unmount the disk
 

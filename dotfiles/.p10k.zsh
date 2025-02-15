@@ -1,0 +1,1 @@
+/Users/pawel/Library/Mobile Documents/com~apple~CloudDocs/Mackup/.p10k.zsh
