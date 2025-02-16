@@ -28,3 +28,55 @@ find "$SRC_PATH_WITHOUT_SLASH" -type d -exec chmod 755 {} \;
 ```bash
 du -sh "$SRC_PATH_WITHOUT_SLASH/*" | sort -rh
 ```
+
+## Make file executable
+
+```bash
+chmod +x "$FILE"
+```
+
+only for the owner:
+
+```bash
+chmod u+x "$FILE"
+```
+
+## Make file non-executable
+
+```bash
+chmod -x "$FILE"
+```
+
+## Automatically restart system every day at 2:30 AM
+
+```bash
+sudo crontab -e
+```
+
+```bash
+30 2 * * * /sbin/shutdown -r now
+```
+
+## Echo with multiple lines
+
+```bash
+echo -e "line1\nline2"
+```
+
+or
+
+```bash
+cat <<EOF
+line1
+line2 with $VARIABLE
+EOF
+```
+
+or cat without variable substitution:
+
+```bash
+cat <<'EOF'
+line1
+line2 with $VARIABLE
+EOF
+```

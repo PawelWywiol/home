@@ -13,11 +13,12 @@ WEBSITE_SLUG=$(echo $WEBSITE_SLUG | sed -e 's/^www_//')
 
 NAMESPACE="sitespeed_io.default"
 RESULT_BASE_URL="http://192.168.0.107:8081/sitespeed-result/"
+DOCKER_NETWORK="code_default"
 
 echo "Running sitespeed.io for $WEBSITE ($WEBSITE_SLUG)"
 
 docker run --rm \
-  --network code_default \
+  --network $DOCKER_NETWORK \
   --cap-add NET_ADMIN \
   -v "$(pwd):/sitespeed.io" sitespeedio/sitespeed.io \
   -c 4g \
@@ -40,7 +41,7 @@ docker run --rm \
   --thirdParty.cpu
 
 docker run --rm \
-  --network code_default \
+  --network $DOCKER_NETWORK \
   -v "$(pwd):/sitespeed.io" sitespeedio/sitespeed.io \
   $WEBSITE \
   --slug $WEBSITE_SLUG \
