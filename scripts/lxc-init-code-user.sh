@@ -41,15 +41,16 @@ EOF
 
 chsh -s $(which zsh)
 
-cat <<EOF
+cat <<'EOF'
 Done!
-- change to user $($USERNAME) password:
-    passwd $USERNAME
-- switch to user $($USERNAME):
-    su - $USERNAME
+- change to user $USERNAME password:
+  passwd $USERNAME
+- switch to user $USERNAME:
+  su - $USERNAME
 - switch to zsh:
-    zsh
-    sh -c "$(curl -fsSL https://install.ohmyz.sh)"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-    echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+  sh -c "$(curl -fsSL https://install.ohmyz.sh)"
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+  zsh
 EOF

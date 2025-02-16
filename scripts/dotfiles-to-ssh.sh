@@ -1,16 +1,34 @@
 #!/bin/bash
 
-# Dotfiles source directory
-DOTFILES_DIR="./dotfiles/"
+DOTFILES_PATH="$PWD/pve/dotfiles"
+DOTFILES_ENVRC="$DOTFILES_PATH/.envrc"
 
-# ssh@host from first argument
+if [ -f "$DOTFILES_ENVRC" ]; then
+  source "$DOTFILES_ENVRC"
+else
+  echo "[ERROR]: $DOTFILES_ENVRC not found"
+  exit 1
+fi
+
+if [ -z "${SYNC_FILES[*]}" ]; then
+  echo "[ERROR]: SYNC_FILES is empty"
+  exit 1
+fi
+
 SSH_HOST="$1"
 
-# Check if $SSH_HOST is provided
 if [ -z "$SSH_HOST" ]; then
   echo "usage: $PWD ssh@host"
   exit 1
 fi
 
-# rsync dotfiles to remote host
-rsync -avPL --no-perms --no-owner --no-group --update -e ssh "$DOTFILES_DIR" "$SSH_HOST":~
+DESTINATION_PATH="$SSH_HOST:~"
+
+for item in "${SYNC_FILES[@]}"; do
+  file="$DOTFILES_PATH/$item"
+  if [ -e "$file" ]; then
+    rsync -avPL --no-perms --no-owner --no-group --update -e ssh "$file" "$DESTINATION_PATH"
+  else
+    echo "[ERROR]: $file not found"
+  fi
+done

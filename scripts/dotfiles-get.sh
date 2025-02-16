@@ -1,20 +1,26 @@
 #!/bin/bash
 
-# List of dotfiles and folders to get from home directory
-DOTFILES=(
-  "$HOME/.p10k.zsh"
-  "$HOME/.zshrc"
-)
+DOTFILES_PATH="$PWD/pve/dotfiles"
+DOTFILES_ENVRC="$DOTFILES_PATH/.envrc"
 
-# Destination directory for dotfiles
-DEST_DIR="./dotfiles/"
+if [ -f "$DOTFILES_ENVRC" ]; then
+  source "$DOTFILES_ENVRC"
+else
+  echo "[ERROR]: $DOTFILES_ENVRC not found"
+  exit 1
+fi
 
-# Create destination directory
-mkdir -p $DEST_DIR
+if [ -z "${SYNC_FILES[*]}" ]; then
+  echo "[ERROR]: SYNC_FILES is empty"
+  exit 1
+fi
 
-# rsync dotfiles to destination directory
-for dotfile in "${DOTFILES[@]}"; do
-  if [ -e "$dotfile" ]; then
-    rsync -avPL --no-perms --no-owner --no-group "$dotfile" "$DEST_DIR"
+for item in "${SYNC_FILES[@]}"; do
+  file="$HOME/$item"
+  if [ -e "$file" ]; then
+    rsync -avPL --no-perms --no-owner --no-group "$file" "$DOTFILES_PATH"
+  else
+    echo "[ERROR]: $file not found"
   fi
 done
+
