@@ -1,5 +1,5 @@
-# api:
-#   dashboard: true
+api:
+  dashboard: true
 #   debug: true
 #   insecure: true
 entryPoints:

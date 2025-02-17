@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 remove_last_slash() {
   local path="$1"
   [[ "$path" == */ ]] && echo "${path%/}" || echo "$path"
@@ -41,18 +39,15 @@ if [ -z "${SYNC_FILES[*]}" ]; then
 fi
 
 for item in "${SYNC_FILES[@]}"; do
-  src_file="$SRC/$item"
-  dest_file="$DEST/"
-
   if [ "$SRC_IS_REMOTE" = true ]; then
-    rsync -avPL --no-perms --no-owner --no-group --update "$SRC:$item" "$DEST/"
+    rsync -avPL --no-perms --no-owner --no-group --update --checksum --relative "$SRC:./$item" "$DEST/"
   elif [ "$DEST_IS_REMOTE" = true ]; then
-    rsync -avPL --no-perms --no-owner --no-group --update "$src_file" "$DEST:"
+    rsync -avPL --no-perms --no-owner --no-group --update --checksum --relative "$SRC/$item" "$DEST:"
   else
-    rsync -avPL --no-perms --no-owner --no-group --update "$src_file" "$dest_file"
+    rsync -avPL --no-perms --no-owner --no-group --update --checksum --relative "$SRC/$item" "$DEST/"
   fi
 
-  echo "✅ synchronized $src_file to $dest_file"
+  echo "✅ synchronized $item"
 done
 
 echo "✅ done"
