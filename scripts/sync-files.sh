@@ -9,7 +9,7 @@ SRC=$1
 DEST=$2
 
 if [ -z "$SRC" ] || [ -z "$DEST" ]; then
-  echo "Użycie: $0 src_path dest_path"
+  echo "Usage: $0 src_path dest_path"
   exit 1
 fi
 
