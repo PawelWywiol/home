@@ -47,6 +47,14 @@ chmod u+x "$FILE"
 chmod -x "$FILE"
 ```
 
+## SSH
+
+### Remove IP from know_hosts
+
+```bash
+ssh-keygen -f "/root/.ssh/known_hosts" -R "XXX.XXX.XXX.XXX"
+```
+
 ## Automatically restart system every day at 2:30 AM
 
 ```bash

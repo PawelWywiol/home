@@ -1,5 +1,11 @@
 # Docker (basics)
 
+## Validate docker compose configuration
+
+```bash
+docker compose config
+```
+
 ## Check docker network list
 
 ```bash
@@ -12,6 +18,12 @@ docker network ls
 docker compose pull
 docker compose up --force-recreate --build -d
 docker image prune -f
+```
+
+## Verify docker container env variables
+
+```bash
+docker exec container_name env | grep ENV_VARIABLE_NAME
 ```
 
 ## Remove all docker containers

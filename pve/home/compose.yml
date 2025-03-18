@@ -1,0 +1,139 @@
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - 9443:9443
+    volumes:
+      - ${PWD}/docker/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      dns_net:
+
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    command: tunnel run
+    env_file: .env
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    networks:
+      dns_net:
+    restart: unless-stopped
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Caddy.Dockerfile
+    container_name: caddy
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_API_TOKEN}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - ACME_AGREE=true
+    ports:
+      - 2019:2019 # remove if you do not want admin API
+      - 80:80
+      - 443:443
+    volumes:
+      - ${PWD}/docker/caddy/config:/config
+      - ${PWD}/docker/caddy/data:/data
+      - ${PWD}/docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${PWD}/docker/caddy/index.html:/usr/share/caddy/index.html
+    networks:
+      dns_net:
+
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    volumes:
+      - ${PWD}/docker/gluetun:/gluetun
+    env_file: .env
+    environment:
+      - TZ=${TZ}
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      - SERVER_CITIES=${SERVER_CITIES}
+      - HEALTH_VPN_DURATION_INITIAL=${HEALTH_VPN_DURATION_INITIAL}
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      timeout: 20s
+      retries: 5
+    networks:
+      dns_net:
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+      - 3000:3000
+      - 3001:3001
+    #   - 5053:53/tcp
+    #   - 5053:53/udp
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    restart: unless-stopped
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    env_file: .env
+    environment:
+      TZ: ${TZ}
+      FTLCONF_webserver_api_password: ${FTLCONF_webserver_api_password}
+      FTLCONF_dns_listeningMode: 'all'
+      # FTLCONF_dns_upstreams: '127.0.0.1#5053'
+    volumes:
+      - ${PWD}/docker/pihole/:/etc/pihole/
+      - ${PWD}/docker/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/
+    networks:
+      dns_net:
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 5080:80/tcp
+      - 5443:443/tcp
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+      - CAP_SYS_NICE
+    restart: unless-stopped
+    depends_on:
+      - cloudflared
+
+  searxng:
+    container_name: searxng
+    image: searxng/searxng:latest
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+    # ports:
+    #     - 8080:8080
+    network_mode: 'service:gluetun'
+    environment:
+      - SEARXNG_BASE_URL=https://${SEARXNG_HOSTNAME}/
+      - UWSGI_WORKERS=${SEARXNG_UWSGI_WORKERS:-4}
+      - UWSGI_THREADS=${SEARXNG_UWSGI_THREADS:-4}
+    volumes:
+      - ${PWD}/docker/searxng/searxng-data:/etc/searxng:rw
+    # remove for first run then re-enable. Think it's a bug...
+    # cap_drop:
+    #   - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+
+networks:
+  dns_net:
+    name: dns_net
+    driver: bridge
