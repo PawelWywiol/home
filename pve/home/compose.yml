@@ -35,7 +35,6 @@ services:
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
       - ACME_AGREE=true
     ports:
-      - 2019:2019 # remove if you do not want admin API
       - 80:80
       - 443:443
     volumes:
@@ -132,6 +131,16 @@ services:
       - CHOWN
       - SETGID
       - SETUID
+
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    volumes:
+      - ${PWD}/docker/glance/config:/app/config
+    ports:
+      - 6080:8080
+    networks:
+      dns_net:
 
 networks:
   dns_net:

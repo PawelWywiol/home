@@ -29,6 +29,11 @@
         }
     }
 
+    @home host home.local.wywiol.eu
+    handle @home {
+        reverse_proxy http://glance:8080
+    }
+
     @searxng host searxng.local.wywiol.eu
     handle @searxng {
         reverse_proxy http://gluetun:8080
@@ -67,5 +72,10 @@
     @wakapi host wakapi.local.wywiol.eu
     handle @wakapi {
         reverse_proxy 192.168.0.104:3000
+    }
+
+    @bimagopl host bimago-pl.local.wywiol.eu
+    handle @bimagopl {
+        reverse_proxy 192.168.0.50:4200
     }
 }
