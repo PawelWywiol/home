@@ -23,3 +23,6 @@ sudo usermod -aG docker $USERNAME
 # change DNSStubListener=no in /etc/systemd/resolved.conf
 sudo sed -i 's/#DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
 sudo systemctl restart systemd-resolved
+
+# Restart docker
+sudo systemctl restart docker

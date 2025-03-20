@@ -1,0 +1,36 @@
+{
+    admin 0.0.0.0:2019
+}
+
+*.bimago.local.wywiol.eu {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        propagation_delay 2m
+        resolvers 1.1.1.1
+    }
+
+    @portainer host portainer.bimago.local.wywiol.eu
+    handle @portainer {
+        reverse_proxy https://portainer:9443 {
+            transport http {
+                tls
+                tls_insecure_skip_verify
+            }
+        }
+    }
+
+    @mongo host mongo.bimago.local.wywiol.eu
+    handle @mongo {
+        reverse_proxy http://mongo:8080
+    }
+
+    @cms host cms.bimago.local.wywiol.eu
+    handle @cms {
+        reverse_proxy http://cms:8080
+    }
+
+    @pl host pl.bimago.local.wywiol.eu
+    handle @pl {
+        reverse_proxy 192.168.0.50:4200
+    }
+}

@@ -1,0 +1,55 @@
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - 9443:9443
+    volumes:
+      - ${PWD}/docker/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Caddy.Dockerfile
+    container_name: caddy
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_API_TOKEN}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - ACME_AGREE=true
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ${PWD}/docker/caddy/config:/config
+      - ${PWD}/docker/caddy/data:/data
+      - ${PWD}/docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${PWD}/docker/caddy/index.html:/usr/share/caddy/index.html
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=payload
+      - MONGO_INITDB_ROOT_PASSWORD=payload
+      - MONGO_INITDB_DATABASE=payload
+    ports:
+      - 27017:27017
+    volumes:
+      - ${PWD}/docker/mongo/db:/data/db
+      - ${PWD}/docker/mongo/config:/data/configdb
+
+  redis-stack:
+    container_name: redis-stack
+    image: redis/redis-stack:latest
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+      - 8001:8001
+    volumes:
+      - ${PWD}/docker/redis/data:/data
