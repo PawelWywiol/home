@@ -24,6 +24,16 @@
         reverse_proxy http://redis-stack:8001
     }
 
+    @grafana host grafana.bimago.local.wywiol.eu
+    handle @grafana {
+        reverse_proxy http://grafana:3000
+    }
+
+    @influxdb host influxdb.bimago.local.wywiol.eu
+    handle @influxdb {
+        reverse_proxy http://influxdb:8086
+    }
+
     @cms host cms.bimago.local.wywiol.eu
     handle @cms {
         reverse_proxy 192.168.0.50:3000

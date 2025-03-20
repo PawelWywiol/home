@@ -1,4 +1,4 @@
-include .env .env.local
+include .env
 export
 
 .PHONY: build
