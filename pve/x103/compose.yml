@@ -35,15 +35,29 @@ services:
     container_name: mongo
     image: mongo:latest
     restart: unless-stopped
+    env_file: .env
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=payload
-      - MONGO_INITDB_ROOT_PASSWORD=payload
-      - MONGO_INITDB_DATABASE=payload
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
     ports:
       - 27017:27017
     volumes:
       - ${PWD}/docker/mongo/db:/data/db
       - ${PWD}/docker/mongo/config:/data/configdb
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    env_file: .env
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${ME_CONFIG_MONGODB_ADMINUSERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${ME_CONFIG_MONGODB_ADMINPASSWORD}
+      - ME_CONFIG_MONGODB_URL=${ME_CONFIG_MONGODB_URL}
+      - ME_CONFIG_BASICAUTH=${ME_CONFIG_BASICAUTH}
 
   redis-stack:
     container_name: redis-stack

@@ -40,6 +40,11 @@
         file_server browse
     }
 
+    @mongo host mongo.bimago.local.wywiol.eu
+    handle @mongo {
+        reverse_proxy http://mongo-express:8081
+    }
+
     @cms host cms.bimago.local.wywiol.eu
     handle @cms {
         reverse_proxy 192.168.0.50:3000
