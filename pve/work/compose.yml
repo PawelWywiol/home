@@ -29,6 +29,7 @@ services:
       - ${PWD}/docker/caddy/data:/data
       - ${PWD}/docker/caddy/Caddyfile:/etc/caddy/Caddyfile
       - ${PWD}/docker/caddy/index.html:/usr/share/caddy/index.html
+      - ${PWD}/xk6/dashboards:/usr/share/caddy/xk6/dashboards
 
   mongo:
     container_name: mongo
@@ -61,6 +62,7 @@ services:
       - 8086:8086
     env_file: .env
     environment:
+      - INFLUXDB_DB=${INFLUXDB_DB}
       - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE}
       - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
       - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
