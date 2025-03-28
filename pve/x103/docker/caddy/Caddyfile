@@ -50,7 +50,7 @@
         reverse_proxy 192.168.0.50:3000
     }
 
-    @pl host pl.bimago.local.wywiol.eu, fr.bimago.local.wywiol.eu, gb.bimago.local.wywiol.eu, es.bimago.local.wywiol.eu, it.bimago.local.wywiol.eu, se.bimago.local.wywiol.eu, pt.bimago.local.wywiol.eu, nl.bimago.local.wywiol.eu, at.bimago.local.wywiol.eu, art.bimago.local.wywiol.eu, cz.bimago.local.wywiol.eu, com.bimago.local.wywiol.eu
+    @pl host pl.bimago.local.wywiol.eu
     handle @pl {
         reverse_proxy 192.168.0.50:4200
     }
