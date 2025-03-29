@@ -8,8 +8,7 @@ services:
       - ${PWD}/docker/portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
-    networks:
-      dns_net:
+
 
   cloudflared:
     container_name: cloudflared
@@ -18,8 +17,6 @@ services:
     env_file: .env
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
-    networks:
-      dns_net:
     restart: unless-stopped
 
   caddy:
@@ -42,8 +39,6 @@ services:
       - ${PWD}/docker/caddy/data:/data
       - ${PWD}/docker/caddy/Caddyfile:/etc/caddy/Caddyfile
       - ${PWD}/docker/caddy/index.html:/usr/share/caddy/index.html
-    networks:
-      dns_net:
 
   gluetun:
     image: qmcgaw/gluetun
@@ -65,8 +60,6 @@ services:
       interval: 60s
       timeout: 20s
       retries: 5
-    networks:
-      dns_net:
     ports:
       - 8080:8080
       - 6881:6881
@@ -93,8 +86,6 @@ services:
     volumes:
       - ${PWD}/docker/pihole/:/etc/pihole/
       - ${PWD}/docker/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/
-    networks:
-      dns_net:
     ports:
       - 53:53/tcp
       - 53:53/udp
@@ -139,8 +130,6 @@ services:
       - ${PWD}/docker/glance/config:/app/config
     ports:
       - 6080:8080
-    networks:
-      dns_net:
 
 networks:
   dns_net:
