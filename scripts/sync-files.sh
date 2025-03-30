@@ -42,7 +42,7 @@ for item in "${SYNC_FILES[@]}"; do
   if [ "$SRC_IS_REMOTE" = true ]; then
     rsync -avPL --no-perms --no-owner --no-group --update --checksum --relative "$SRC:./$item" "$DEST/"
   elif [ "$DEST_IS_REMOTE" = true ]; then
-    rsync -avPL --no-perms --no-owner --no-group --update --checksum --relative "$SRC/$item" "$DEST:"
+    rsync -avPL --no-perms --no-owner --no-group --update --checksum --relative "$SRC/./$item" "$DEST:~/"
   else
     rsync -avPL --no-perms --no-owner --no-group --update --checksum --relative "$SRC/$item" "$DEST/"
   fi

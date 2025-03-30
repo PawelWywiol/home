@@ -100,5 +100,5 @@ services:
       - GF_AUTH_BASIC_ENABLED=false
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     volumes:
-      - ${PWD}/docker/grafana:/etc/grafana/provisioning/
+      - ${PWD}/docker/grafana/provisioning:/etc/grafana/provisioning/
     restart: unless-stopped
