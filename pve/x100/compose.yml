@@ -9,6 +9,18 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
+  deunhealth:
+    container_name: deunhealth
+    image: qmcgaw/deunhealth
+    network_mode: "none"
+    env_file: .env
+    environment:
+      - LOG_LEVEL=info
+      - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
+      - TZ=${TZ}
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   cloudflared:
     container_name: cloudflared
@@ -103,7 +115,6 @@ services:
   searxng:
     container_name: searxng
     image: searxng/searxng:latest
-    restart: unless-stopped
     depends_on:
       - gluetun
     # ports:
@@ -122,6 +133,9 @@ services:
       - CHOWN
       - SETGID
       - SETUID
+    labels:
+      deunhealth.restart.on.unhealthy: true
+    restart: unless-stopped
 
   glance:
     container_name: glance
@@ -130,6 +144,9 @@ services:
       - ${PWD}/docker/glance/config:/app/config
     ports:
       - 6080:8080
+    restart: unless-stopped
+    labels:
+      deunhealth.restart.on.unhealthy: true
 
 networks:
   dns_net:
