@@ -34,4 +34,14 @@
         root * /usr/share/caddy/xk6/dashboards
         file_server browse
     }
+
+    @wakapi host wakapi.dev.local.wywiol.eu
+    handle @wakapi {
+        reverse_proxy http://wakapi:3000
+    }
+
+    @chromium host chromium.dev.local.wywiol.eu
+    handle @chromium {
+        reverse_proxy http://gluetun:3000
+    }
 }

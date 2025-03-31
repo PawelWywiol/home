@@ -33,7 +33,7 @@ services:
 
   deunhealth:
     image: qmcgaw/deunhealth
-    container_name: deunhealth:latest
+    container_name: deunhealth
     network_mode: 'none'
     env_file: .env
     environment:
@@ -46,7 +46,7 @@ services:
 
   gluetun:
     image: qmcgaw/gluetun
-    container_name: gluetun:latest
+    container_name: gluetun
     cap_add:
       - NET_ADMIN
     devices:
@@ -99,7 +99,7 @@ services:
     container_name: grafana
     image: grafana/grafana:latest
     ports:
-      - 3000:3000
+      - 3002:3000
     env_file: .env
     environment:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -114,7 +114,7 @@ services:
     container_name: wakapi
     image: ghcr.io/muety/wakapi:latest
     ports:
-      - 3001:3000
+      - 3003:3000
     environment:
       WAKAPI_PASSWORD_SALT: ${WAKAPI_PASSWORD_SALT}
       WAKAPI_EXPOSE_METRICS: ${WAKAPI_EXPOSE_METRICS}
