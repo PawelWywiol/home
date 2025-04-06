@@ -35,6 +35,11 @@
         file_server browse
     }
 
+    @glitchtip host glitchtip.dev.local.wywiol.eu
+    handle @glitchtip {
+        reverse_proxy http://glitchtip-web:8000
+    }
+
     @wakapi host wakapi.dev.local.wywiol.eu
     handle @wakapi {
         reverse_proxy http://wakapi:3000

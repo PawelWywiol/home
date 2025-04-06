@@ -113,3 +113,29 @@ Datacenter > Storage > Add > Directory > /home/backups
 ```
 Datacenter > Backup > Add > Backup > VM > Storage: /home/backups
 ```
+
+## Create debian cloud-init template
+
+```bash
+wget https://cdimage.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.raw
+qm create 5001 --name debian-cloud --net0 virtio,bridge=vmbr0 --scsihw virtio-scsi-pci --machine q35
+qm set 5001 --scsi0 local-zfs:0,discard=on,ssd=1,format=raw,import-from=/root/debian-11-generic-amd64.raw
+qm disk resize 5001 scsi0 8G
+qm set 5001 --boot order=scsi0
+qm set 5001 --cpu host --cores 2 --memory 4096
+qm set 5001 --bios ovmf --efidisk0 local-zfs:1,format=raw,efitype=4m,pre-enrolled-keys=1
+qm set 5001 --ide2 local-zfs:cloudinit
+qm set 5001 --agent enabled=1
+
+# custimiz cloud-init settings
+
+qm template 5001
+```
+
+```bash
+# make a full clone
+
+sudo apt update
+sudo apt install -y qemu-guest-agent
+sudo reboot
+```

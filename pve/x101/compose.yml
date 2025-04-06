@@ -1,3 +1,21 @@
+x-glitchtip-environment: &glitchtip-environment
+  DATABASE_URL: ${GLITCHTIP_DATABASE_URL}
+  POSTGRES_DB: ${POSTGRES_DB}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  SECRET_KEY: ${GLITCHTIP_SECRET_KEY}
+  PORT: ${GLITCHTIP_PORT}
+  EMAIL_URL: ${GLITCHTIP_EMAIL_URL}
+  GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN}
+  DEFAULT_FROM_EMAIL: ${GLITCHTIP_DEFAULT_FROM_EMAIL}
+  CELERY_WORKER_AUTOSCALE: ${GLITCHTIP_CELERY_WORKER_AUTOSCALE}
+  CELERY_WORKER_MAX_TASKS_PER_CHILD: ${GLITCHTIP_CELERY_WORKER_MAX_TASKS_PER_CHILD}
+  CSP_DEFAULT_SRC: ${GLITCHTIP_CSP_DEFAULT_SRC}
+
+x-glitchtip-depends_on: &glitchtip-depends_on
+  - postgres
+  - redis
+
 services:
   portainer:
     container_name: portainer
@@ -31,19 +49,6 @@ services:
       - ${PWD}/xk6/dashboards:/usr/share/caddy/xk6/dashboards
     restart: unless-stopped
 
-  deunhealth:
-    image: qmcgaw/deunhealth
-    container_name: deunhealth
-    network_mode: 'none'
-    env_file: .env
-    environment:
-      - LOG_LEVEL=info
-      - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
-      - TZ=${TZ}
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
-
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
@@ -76,6 +81,17 @@ services:
       retries: 5
     restart: unless-stopped
 
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - ${PWD}/docker/postgresql/data:/var/lib/postgresql/data
+
   influxdb:
     container_name: influxdb
     image: influxdb:latest
@@ -84,12 +100,12 @@ services:
     env_file: .env
     environment:
       - INFLUXDB_DB=${INFLUXDB_DB}
-      - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE}
-      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+      - DOCKER_INFLUXDB_INIT_MODE=${INFLUXDB_INIT_MODE}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_INIT_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_INIT_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_INIT_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_INIT_ADMIN_TOKEN}
     volumes:
       - ${PWD}/docker/influxdb/data:/var/lib/influxdb2
       - ${PWD}/docker/influxdb/config:/etc/influxdb2
@@ -102,13 +118,23 @@ services:
       - 3002:3000
     env_file: .env
     environment:
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_BASIC_ENABLED=false
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=${GRAFANA_AUTH_ANONYMOUS_ORG_ROLE}
+      - GF_AUTH_ANONYMOUS_ENABLED=${GRAFANA_AUTH_ANONYMOUS_ENABLED}
+      - GF_AUTH_BASIC_ENABLED=${GRAFANA_AUTH_BASIC_ENABLED}
+      - GF_SERVER_SERVE_FROM_SUB_PATH=${GRAFANA_SERVER_SERVE_FROM_SUB_PATH}
     volumes:
       - ${PWD}/docker/grafana/provisioning:/etc/grafana/provisioning/
     restart: unless-stopped
+
+  redis:
+    container_name: redis
+    image: redis/redis-stack:latest
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+      - 8001:8001
+    volumes:
+      - ${PWD}/docker/redis/data:/data
 
   wakapi:
     container_name: wakapi
@@ -121,6 +147,37 @@ services:
     volumes:
       - ${PWD}/docker/wakapi/data:/data
     restart: unless-stopped
+
+  glitchtip-web:
+    container_name: glitchtip-web
+    image: glitchtip/glitchtip:latest
+    depends_on: *glitchtip-depends_on
+    ports:
+      - 8000:8000
+    env_file: .env
+    environment: *glitchtip-environment
+    volumes:
+      - ${PWD}/docker/glitchtip/uploads:/code/uploads
+    restart: unless-stopped
+
+  glitchtip-worker:
+    container_name: glitchtip-worker
+    image: glitchtip/glitchtip:latest
+    command: ./bin/run-celery-with-beat.sh
+    depends_on: *glitchtip-depends_on
+    env_file: .env
+    environment: *glitchtip-environment
+    volumes:
+      - ${PWD}/docker/glitchtip/uploads:/code/uploads
+    restart: unless-stopped
+
+  glitchtip-migrate:
+    container_name: glitchtip-migrate
+    image: glitchtip/glitchtip:latest
+    command: ./bin/run-migrate.sh
+    depends_on: *glitchtip-depends_on
+    env_file: .env
+    environment: *glitchtip-environment
 
   chromium:
     container_name: chromium
