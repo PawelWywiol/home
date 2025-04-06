@@ -7,7 +7,7 @@ sudo apt-get update
 sudo apt-upgrade -y
 
 # Install dependencies
-sudo apt-get install ca-certificates curl sudo zsh build-essential rsync -y
+sudo apt-get install ca-certificates curl sudo zsh build-essential rsync qemu-guest-agent -y
 
 # Install Docker
 sudo curl -sSL https://get.docker.com/ | sh
@@ -26,3 +26,6 @@ sudo systemctl restart systemd-resolved
 
 # Restart docker
 sudo systemctl restart docker
+
+# Reboot the system
+sudo reboot
