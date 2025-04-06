@@ -1,0 +1,47 @@
+{
+    admin 0.0.0.0:2019
+}
+
+*.dev.local.wywiol.eu {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        propagation_delay 2m
+        resolvers 1.1.1.1
+    }
+
+    @portainer host portainer.dev.local.wywiol.eu
+    handle @portainer {
+        reverse_proxy https://portainer:9443 {
+            transport http {
+                tls
+                tls_insecure_skip_verify
+            }
+        }
+    }
+
+    @grafana host grafana.dev.local.wywiol.eu
+    handle @grafana {
+        reverse_proxy http://grafana:3000
+    }
+
+    @influxdb host influxdb.dev.local.wywiol.eu
+    handle @influxdb {
+        reverse_proxy http://influxdb:8086
+    }
+
+    @k6 host k6.dev.local.wywiol.eu
+    handle @k6 {
+        root * /usr/share/caddy/k6/dashboards
+        file_server browse
+    }
+
+    @glitchtip host glitchtip.dev.local.wywiol.eu
+    handle @glitchtip {
+        reverse_proxy http://glitchtip-web:8000
+    }
+
+    @wakapi host wakapi.dev.local.wywiol.eu
+    handle @wakapi {
+        reverse_proxy http://wakapi:3000
+    }
+}
