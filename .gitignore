@@ -5,3 +5,5 @@
 # Docker Secrets, Environment Files
 **/secret.*
 **/.env
+
+**/docker/data
