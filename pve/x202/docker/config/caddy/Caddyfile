@@ -29,6 +29,16 @@
         reverse_proxy http://influxdb:8086
     }
 
+    @redis host redis.dev.local.wywiol.eu
+    handle @redis {
+        reverse_proxy http://redis:8001
+    }
+
+    @mongo host mongo.dev.local.wywiol.eu
+    handle @mongo {
+        reverse_proxy http://mongo-express:8081
+    }
+
     @k6 host k6.dev.local.wywiol.eu
     handle @k6 {
         root * /usr/share/caddy/k6/dashboards
@@ -43,5 +53,23 @@
     @wakapi host wakapi.dev.local.wywiol.eu
     handle @wakapi {
         reverse_proxy http://wakapi:3000
+    }
+}
+
+*.bimago.local.wywiol.eu {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        propagation_delay 2m
+        resolvers 1.1.1.1
+    }
+
+    @cms host cms.bimago.local.wywiol.eu
+    handle @cms {
+        reverse_proxy 192.168.0.50:3000
+    }
+
+    @pl host pl.bimago.local.wywiol.eu
+    handle @pl {
+        reverse_proxy 192.168.0.50:4200
     }
 }

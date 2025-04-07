@@ -105,6 +105,34 @@ services:
     volumes:
       - ${PWD}/docker/data/redis/data:/data
 
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    ports:
+      - 27017:27017
+    volumes:
+      - ${PWD}/docker/data/mongo/db:/data/db
+      - ${PWD}/docker/data/mongo/config:/data/configdb
+    restart: unless-stopped
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    env_file: .env
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_EXPRESS_ADMINUSERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_EXPRESS_ADMINPASSWORD}
+      - ME_CONFIG_MONGODB_URL=${MONGO_EXPRESS_URL}
+      - ME_CONFIG_BASICAUTH=${MONGO_EXPRESS_BASICAUTH}
+
   wakapi:
     container_name: wakapi
     image: ghcr.io/muety/wakapi:latest
