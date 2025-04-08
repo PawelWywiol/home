@@ -185,6 +185,9 @@ services:
     volumes:
       - ${PWD}/docker/data/beszel/data:/beszel_data
       - ${PWD}/docker/data/beszel/socket:/beszel_socket
+      # - ./beszel_socket:/beszel_socket
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   beszel-agent:
     image: "henrygd/beszel-agent"
@@ -193,10 +196,12 @@ services:
     network_mode: host
     volumes:
       - ${PWD}/docker/data/beszel/socket:/beszel_socket
+      # - ./beszel_socket:/beszel_socket
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # monitor other disks / partitions by mounting a folder in /extra-filesystems
       # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
     env_file: .env
     environment:
+      # PORT: ${BESZEL_PORT}
       LISTEN: ${BESZEL_LISTEN}
       KEY: ${BESZEL_KEY}
