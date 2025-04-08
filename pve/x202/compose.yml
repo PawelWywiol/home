@@ -175,3 +175,28 @@ services:
     depends_on: *glitchtip-depends_on
     env_file: .env
     environment: *glitchtip-environment
+
+  beszel:
+    container_name: beszel
+    image: henrygd/beszel:latest
+    restart: unless-stopped
+    ports:
+      - 8090:8090
+    volumes:
+      - ${PWD}/docker/data/beszel/data:/beszel_data
+      - ${PWD}/docker/data/beszel/socket:/beszel_socket
+
+  beszel-agent:
+    image: "henrygd/beszel-agent"
+    container_name: "beszel-agent"
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ${PWD}/docker/data/beszel/socket:/beszel_socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # monitor other disks / partitions by mounting a folder in /extra-filesystems
+      # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
+    env_file: .env
+    environment:
+      LISTEN: ${BESZEL_LISTEN}
+      KEY: ${BESZEL_KEY}
