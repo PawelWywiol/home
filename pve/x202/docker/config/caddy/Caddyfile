@@ -55,6 +55,11 @@
     handle @wakapi {
         reverse_proxy http://wakapi:3000
     }
+
+    @beszel host beszel.dev.local.wywiol.eu
+    handle @beszel {
+        reverse_proxy http://beszel:8090
+    }
 }
 
 *.bimago.local.wywiol.eu {
