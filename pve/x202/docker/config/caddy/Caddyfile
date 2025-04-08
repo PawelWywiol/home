@@ -1,4 +1,5 @@
 {
+    local_certs
     admin 0.0.0.0:2019
 }
 
@@ -70,6 +71,15 @@
 
     @pl host pl.bimago.local.wywiol.eu
     handle @pl {
+        reverse_proxy 192.168.0.50:4200
+    }
+}
+
+*.stg.artgeist.co {
+    tls internal
+
+    @spl host bimago-pl.stg.artgeist.co
+    handle @spl {
         reverse_proxy 192.168.0.50:4200
     }
 }
