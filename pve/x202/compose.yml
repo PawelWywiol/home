@@ -205,3 +205,12 @@ services:
       # PORT: ${BESZEL_PORT}
       LISTEN: ${BESZEL_LISTEN}
       KEY: ${BESZEL_KEY}
+
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:latest
+    volumes:
+      - ${PWD}/docker/data/uptime-kuma/data:/app/data
+    ports:
+      - 3001:3001
+    restart: unless-stopped

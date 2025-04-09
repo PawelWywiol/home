@@ -60,6 +60,11 @@
     handle @beszel {
         reverse_proxy http://beszel:8090
     }
+
+    @uptime host uptime.local.wywiol.eu
+    handle @uptime {
+        reverse_proxy http://uptime-kuma:3001
+    }
 }
 
 *.bimago.local.wywiol.eu {
