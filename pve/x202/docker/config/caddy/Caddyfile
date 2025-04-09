@@ -65,6 +65,11 @@
     handle @uptime {
         reverse_proxy http://uptime-kuma:3001
     }
+
+    @ntfy host ntfy.local.wywiol.eu
+    handle @ntfy {
+        reverse_proxy http://ntfy:80
+    }
 }
 
 *.bimago.local.wywiol.eu {
