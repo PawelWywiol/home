@@ -3,14 +3,14 @@
     admin 0.0.0.0:2019
 }
 
-*.dev.local.wywiol.eu {
+*.local.wywiol.eu {
     tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
         propagation_delay 2m
         resolvers 1.1.1.1
     }
 
-    @portainer host portainer.dev.local.wywiol.eu
+    @portainer host portainer-x202.local.wywiol.eu
     handle @portainer {
         reverse_proxy https://portainer:9443 {
             transport http {
@@ -20,43 +20,43 @@
         }
     }
 
-    @grafana host grafana.dev.local.wywiol.eu
+    @grafana host grafana.local.wywiol.eu
     handle @grafana {
         reverse_proxy http://grafana:3000
     }
 
-    @influxdb host influxdb.dev.local.wywiol.eu
+    @influxdb host influxdb.local.wywiol.eu
     handle @influxdb {
         reverse_proxy http://influxdb:8086
     }
 
-    @redis host redis.dev.local.wywiol.eu
+    @redis host redis.local.wywiol.eu
     handle @redis {
         reverse_proxy http://redis:8001
     }
 
-    @mongo host mongo.dev.local.wywiol.eu
+    @mongo host mongo.local.wywiol.eu
     handle @mongo {
         reverse_proxy http://mongo-express:8081
     }
 
-    @k6 host k6.dev.local.wywiol.eu
+    @k6 host k6.local.wywiol.eu
     handle @k6 {
         root * /usr/share/caddy/k6/dashboards
         file_server browse
     }
 
-    @glitchtip host glitchtip.dev.local.wywiol.eu
+    @glitchtip host glitchtip.local.wywiol.eu
     handle @glitchtip {
         reverse_proxy http://glitchtip-web:8000
     }
 
-    @wakapi host wakapi.dev.local.wywiol.eu
+    @wakapi host wakapi.local.wywiol.eu
     handle @wakapi {
         reverse_proxy http://wakapi:3000
     }
 
-    @beszel host beszel.dev.local.wywiol.eu
+    @beszel host beszel.local.wywiol.eu
     handle @beszel {
         reverse_proxy http://beszel:8090
     }

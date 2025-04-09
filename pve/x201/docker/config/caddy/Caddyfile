@@ -9,7 +9,7 @@
         resolvers 1.1.1.1
     }
 
-    @portainer host portainer.local.wywiol.eu
+    @portainer host portainer-x201.local.wywiol.eu
     handle @portainer {
         reverse_proxy https://portainer:9443 {
             transport http {
