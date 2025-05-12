@@ -1,6 +1,6 @@
 # Scripts
 
-## init-docker-lxc.sh
+## init-lxc.sh
 
 ### On container
 
@@ -12,7 +12,7 @@ Reset the `code` user password
 passwd code
 ```
 
-### On your machine
+### On local machine
 
 Remove previous entry from `~/.ssh/known_hosts`
 
@@ -33,7 +33,7 @@ code ~/.ssh/config
 ```
 
 ```shell
-Host local-traefik
+Host local-host
 HostName 192.168.0.XXX
 User code
 ```
