@@ -1,11 +1,25 @@
 services:
   ollama:
     container_name: ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:rocm
     ports:
       - 11434:11434
     volumes:
       - ${PWD}/docker/data/ollama:/root/.ollama
+    environment:
+      - OLLAMA_GPU_LAYER=rocm
+      - HSA_OVERRIDE_GFX_VERSION=10.3.0
+      - HIP_VISIBLE_DEVICES=0
+    devices:
+      - "/dev/kfd"
+      - "/dev/dri"
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+    ipc: host
+    group_add:
+      - video
     tty: true
     restart: unless-stopped
 
@@ -20,8 +34,21 @@ services:
       - 3000:8080
     env_file: .env
     environment:
+      - OLLAMA_GPU_LAYER=rocm
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
       - WEBUI_SECRET_KEY=${OLLAMA_API_KEY}
+      - HSA_OVERRIDE_GFX_VERSION=10.3.0
+      - HIP_VISIBLE_DEVICES=0
+    devices:
+      - "/dev/kfd"
+      - "/dev/dri"
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+    ipc: host
+    group_add:
+      - video
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
