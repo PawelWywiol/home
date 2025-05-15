@@ -1,7 +1,7 @@
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.30.0-alpine
     ports:
       - 9443:9443
     volumes:
@@ -11,7 +11,7 @@ services:
 
   cloudflared:
     container_name: cloudflared
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:2025.4.2
     command: tunnel run
     env_file: .env
     environment:
@@ -41,7 +41,7 @@ services:
 
   pihole:
     container_name: pihole
-    image: pihole/pihole:latest
+    image: pihole/pihole:2025.04.0
     env_file: .env
     environment:
       TZ: ${TZ}
@@ -66,8 +66,8 @@ services:
       - cloudflared
 
   beszel-agent:
-    image: "henrygd/beszel-agent"
-    container_name: "beszel-agent"
+    image: henrygd/beszel-agent:0.11.1
+    container_name: beszel-agent
     restart: unless-stopped
     network_mode: host
     volumes:
