@@ -88,3 +88,16 @@ line1
 line2 with $VARIABLE
 EOF
 ```
+
+## Resize partition without losing data
+
+```bash
+sudo vgdisplay
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+```
+## Check disk space
+
+```bash
+df -h
+```

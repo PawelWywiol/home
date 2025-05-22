@@ -1,5 +1,21 @@
+x-common: &rocm-common
+  devices:
+    - /dev/kfd
+    - /dev/dri
+  security_opt:
+    - seccomp:unconfined
+  cap_add:
+    - SYS_PTRACE
+  ipc: host
+  group_add:
+    - video
+  tty: true
+  extra_hosts:
+      - host.docker.internal:host-gateway
+
 services:
   ollama:
+    <<: *rocm-common
     container_name: ollama
     image: ollama/ollama:rocm
     ports:
@@ -10,20 +26,10 @@ services:
       - OLLAMA_GPU_LAYER=rocm
       - HSA_OVERRIDE_GFX_VERSION=10.3.0
       - HIP_VISIBLE_DEVICES=0
-    devices:
-      - "/dev/kfd"
-      - "/dev/dri"
-    security_opt:
-      - seccomp:unconfined
-    cap_add:
-      - SYS_PTRACE
-    ipc: host
-    group_add:
-      - video
-    tty: true
     restart: unless-stopped
 
   open-webui:
+    <<: *rocm-common
     container_name: open-webui
     image: ghcr.io/open-webui/open-webui:main
     volumes:
@@ -39,16 +45,48 @@ services:
       - WEBUI_SECRET_KEY=${OLLAMA_API_KEY}
       - HSA_OVERRIDE_GFX_VERSION=10.3.0
       - HIP_VISIBLE_DEVICES=0
-    devices:
-      - "/dev/kfd"
-      - "/dev/dri"
-    security_opt:
-      - seccomp:unconfined
-    cap_add:
-      - SYS_PTRACE
-    ipc: host
-    group_add:
-      - video
-    extra_hosts:
-      - host.docker.internal:host-gateway
+    restart: unless-stopped
+
+  sd-rocm-comfyui:
+    <<: *rocm-common
+    container_name: sd-rocm-comfyui
+    image: rocm/pytorch:latest
+    ports:
+      - "${COMFYUI_PORT}:${COMFYUI_PORT}"
+    command: ["/conf/startup-comfyui.sh"]
+    volumes:
+      - ${PWD}/docker/data/sd-rocm/home-comfyui:/root
+      - ${PWD}/docker/data/sd-rocm/checkpoints:/checkpoints
+      - ${PWD}/docker/config/sd-rocm/conf:/conf
+    env_file: .env
+    environment:
+      - DOCKER_INSTANCE=comfyui
+      - PYTHON_VERSION=${PYTHON_VERSION:-3.12}
+      - ROCM_VERSION=${ROCM_VERSION:-release}
+      - ROOT_DIR=${ROOT_DIR:-/root}
+      - COMFYUI_PORT=${COMFYUI_PORT:-31488}
+      - HSA_OVERRIDE_GFX_VERSION=10.3.0
+      - HIP_VISIBLE_DEVICES=0
+    restart: unless-stopped
+
+  sd-rocm-webui:
+    <<: *rocm-common
+    container_name: sd-rocm-webui
+    image: rocm/pytorch:latest
+    ports:
+      - "${WEBUI_PORT}:${WEBUI_PORT:-31489}"
+    command: ["/conf/startup-webui.sh"]
+    volumes:
+      - ${PWD}/docker/data/sd-rocm/home-webui:/root
+      - ${PWD}/docker/data/sd-rocm/checkpoints:/checkpoints
+      - ${PWD}/docker/config/sd-rocm/conf:/conf
+    env_file: .env
+    environment:
+      - DOCKER_INSTANCE=webui
+      - PYTHON_VERSION=${PYTHON_VERSION:-3.12}
+      - ROCM_VERSION=${ROCM_VERSION:-release}
+      - ROOT_DIR=${ROOT_DIR:-/root}
+      - WEBUI_PORT=${WEBUI_PORT:-31489}
+      - HSA_OVERRIDE_GFX_VERSION=10.3.0
+      - HIP_VISIBLE_DEVICES=0
     restart: unless-stopped
