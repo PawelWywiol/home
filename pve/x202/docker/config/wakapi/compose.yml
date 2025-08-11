@@ -1,0 +1,25 @@
+---
+services:
+  wakapi:
+    container_name: wakapi
+    image: ghcr.io/muety/wakapi:2.13.4
+    ports:
+      - 3003:3000
+    environment:
+      WAKAPI_PASSWORD_SALT: ${WAKAPI_PASSWORD_SALT}
+      WAKAPI_EXPOSE_METRICS: ${WAKAPI_EXPOSE_METRICS}
+    volumes:
+      - wakapi_data:/data
+    restart: unless-stopped
+    networks:
+      - caddy_network
+
+volumes:
+  wakapi_data:
+    name: wakapi_data
+    driver: local
+
+networks:
+  caddy_network:
+    name: caddy_network
+    external: true

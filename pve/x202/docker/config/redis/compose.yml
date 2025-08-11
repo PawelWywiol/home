@@ -1,0 +1,23 @@
+---
+services:
+  redis:
+    container_name: redis
+    image: redis/redis-stack:7.4.0-v3
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+      - 8001:8001
+    volumes:
+      - redis_data:/data
+    networks:
+      - caddy_network
+
+volumes:
+  redis_data:
+    name: redis_data
+    driver: local
+
+networks:
+  caddy_network:
+    name: caddy_network
+    external: true

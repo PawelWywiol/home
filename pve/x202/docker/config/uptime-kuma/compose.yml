@@ -1,0 +1,22 @@
+---
+services:
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:1.23.16-alpine
+    volumes:
+      - uptime-kuma_data:/app/data
+    networks:
+      - caddy_network
+    ports:
+      - 3001:3001
+    restart: unless-stopped
+
+volumes:
+  uptime-kuma_data:
+    name: uptime-kuma_data
+    driver: local
+
+networks:
+  caddy_network:
+    name: caddy_network
+    external: true

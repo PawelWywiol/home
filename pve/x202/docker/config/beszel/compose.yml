@@ -1,0 +1,46 @@
+---
+services:
+  beszel:
+    container_name: beszel
+    image: henrygd/beszel:0.11.1
+    restart: unless-stopped
+    ports:
+      - 8090:8090
+    volumes:
+      - beszel_data:/beszel_data
+      - beszel_socket:/beszel_socket
+      # - ./beszel_socket:/beszel_socket
+    networks:
+      - caddy_network
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  beszel-agent:
+    container_name: beszel-agent
+    image: henrygd/beszel-agent:0.11.1
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - beszel_socket:/beszel_socket
+      # - ./beszel_socket:/beszel_socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # monitor other disks / partitions by mounting a folder in /extra-filesystems
+      # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
+    env_file: .env
+    environment:
+      # PORT: ${BESZEL_PORT}
+      LISTEN: ${BESZEL_LISTEN}
+      KEY: ${BESZEL_KEY}
+
+volumes:
+  beszel_data:
+    name: beszel_data
+    driver: local
+  beszel_socket:
+    name: beszel_socket
+    driver: local
+
+networks:
+  caddy_network:
+    name: caddy_network
+    external: true

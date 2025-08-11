@@ -1,0 +1,38 @@
+---
+services:
+  influxdb:
+    container_name: influxdb
+    image: influxdb:1.11.8
+    ports:
+      - 8086:8086
+    environment:
+      - INFLUXDB_DB=${INFLUXDB_DB}
+      - DOCKER_INFLUXDB_INIT_MODE=${INFLUXDB_INIT_MODE}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_INIT_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_INIT_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_INIT_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_INIT_ADMIN_TOKEN}
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    networks:
+      - influxdb_network
+      - caddy_network
+    restart: unless-stopped
+
+volumes:
+  influxdb_data:
+    name: influxdb_data
+    driver: local
+  influxdb_config:
+    name: influxdb_config
+    driver: local
+
+networks:
+  influxdb_network:
+    name: influxdb_network
+    driver: bridge
+  caddy_network:
+    name: caddy_network
+    external: true

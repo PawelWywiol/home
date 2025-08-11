@@ -256,9 +256,11 @@ launch_comfyui() {
   fi
   
   # Run the VAE on the CPU.
-#  COMMAND+=("--cpu-vae")
+  COMMAND+=("--cpu-vae")
 
   COMMAND+=("--lowvram")
+  COMMAND+=("--fp16-vae")
+  COMMAND+=("--use-pytorch-cross-attention")
   
   "${COMMAND[@]}"
 }

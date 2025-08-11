@@ -1,0 +1,35 @@
+---
+services:
+  caddy:
+    container_name: caddy
+    build:
+      context: .
+      dockerfile: Caddy.Dockerfile
+    environment:
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_API_TOKEN}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - ACME_AGREE=true
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - caddy_config:/config
+      - caddy_data:/data
+      - ${PWD}/docker/config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${PWD}/docker/config/caddy/index.html:/usr/share/caddy/index.html
+    restart: unless-stopped
+    networks:
+      - caddy_network
+
+volumes:
+  caddy_config:
+    name: caddy_config
+    driver: local
+  caddy_data:
+    name: caddy_data
+    driver: local
+
+networks:
+  caddy_network:
+    name: caddy_network
+    driver: bridge

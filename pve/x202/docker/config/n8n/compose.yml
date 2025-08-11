@@ -1,0 +1,34 @@
+services:
+  n8n:
+    container_name: n8n
+    image: n8nio/n8n:1.104.0
+    restart: unless-stopped
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - SUBDOMAIN=${SUBDOMAIN}
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - N8N_SECURE_COOKIE=${N8N_SECURE_COOKIE}
+      - NODE_ENV=${NODE_ENV}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ${PWD}/docker/data/n8n/files:/files
+    networks:
+      - caddy_network
+    ports:
+      - 5678:5678
+
+volumes:
+  n8n_data:
+    name: n8n_data
+    driver: local
+
+networks:
+  caddy_network:
+    name: caddy_network
+    external: true
