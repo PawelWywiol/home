@@ -54,6 +54,16 @@ n8n:
 		*) echo "Usage: make n8n [up|down|restart]"; exit 1 ;; \
 	esac
 
+.PHONY: glitchtip
+glitchtip:
+	@case "$(word 2, $(MAKECMDGOALS))" in \
+		up) docker compose --env-file ./docker/config/glitchtip/.env -f ./docker/config/glitchtip/compose.yml up -d ;; \
+		down) docker compose -f ./docker/config/glitchtip/compose.yml down ;; \
+		restart) docker compose -f ./docker/config/glitchtip/compose.yml restart ;; \
+		createsuperuser) docker compose -f ./docker/config/glitchtip/compose.yml run glitchtip-migrate ./manage.py createsuperuser ;; \
+		*) echo "Usage: make glitchtip [up|down|restart|createsuperuser]"; exit 1 ;; \
+	esac
+
 .PHONY: wakapi
 wakapi:
 	@case "$(word 2, $(MAKECMDGOALS))" in \
@@ -105,13 +115,19 @@ postgres:
 		up) docker compose --env-file ./docker/config/postgres/.env -f ./docker/config/postgres/compose.yml up -d ;; \
 		down) docker compose -f ./docker/config/postgres/compose.yml down ;; \
 		restart) docker compose -f ./docker/config/postgres/compose.yml restart ;; \
-		*) echo "Usage: make postgres [up|down|restart]"; exit 1 ;; \
+		db) \
+			if [ -z "$(word 3, $(MAKECMDGOALS))" ]; then \
+				echo "Usage: make postgres db SOME_DB_NAME"; exit 1; \
+			else \
+				bash ./docker/config/postgres/init-db.sh $(word 3, $(MAKECMDGOALS)); \
+			fi ;; \
+		*) echo "Usage: make postgres [up|down|restart|db]"; exit 1 ;; \
 	esac
 
 .PHONY: redis
 redis:
 	@case "$(word 2, $(MAKECMDGOALS))" in \
-		up) docker compose -f ./docker/config/redis/compose.yml up -d ;; \
+		up) docker compose --env-file ./docker/config/redis/.env -f ./docker/config/redis/compose.yml up -d ;; \
 		down) docker compose -f ./docker/config/redis/compose.yml down ;; \
 		restart) docker compose -f ./docker/config/redis/compose.yml restart ;; \
 		*) echo "Usage: make redis [up|down|restart]"; exit 1 ;; \
