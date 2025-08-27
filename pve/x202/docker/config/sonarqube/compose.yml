@@ -1,0 +1,63 @@
+---
+services:
+  sonarqube:
+    container_name: sonarqube
+    image: sonarqube:community
+    restart: unless-stopped
+    depends_on:
+      - sonarqube_db
+    environment:
+      SONAR_JDBC_URL: ${SONAR_JDBC_URL}
+      SONAR_JDBC_USERNAME: ${SONAR_JDBC_USERNAME}
+      SONAR_JDBC_PASSWORD: ${SONAR_JDBC_PASSWORD}
+    ports:
+      - 9000:9000
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_temp:/opt/sonarqube/temp
+    networks:
+      - caddy_network
+
+  sonarqube_db:
+    image: postgres:16
+    container_name: sonarqube_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - sonarqube_db:/var/lib/postgresql
+      - sonarqube_db_data:/var/lib/postgresql/data
+    networks:
+      - caddy_network
+
+volumes:
+  sonarqube_conf:
+    name: sonarqube_conf
+    driver: local
+  sonarqube_data:
+    name: sonarqube_data
+    driver: local
+  sonarqube_extensions:
+    name: sonarqube_extensions
+    driver: local
+  sonarqube_logs:
+    name: sonarqube_logs
+    driver: local
+  sonarqube_temp:
+    name: sonarqube_temp
+    driver: local
+  sonarqube_db:
+    name: sonarqube_db
+    driver: local
+  sonarqube_db_data:
+    name: sonarqube_db_data
+    driver: local
+
+networks:
+  caddy_network:
+    name: caddy_network
+    external: true

@@ -73,6 +73,15 @@ wakapi:
 		*) echo "Usage: make wakapi [up|down|restart]"; exit 1 ;; \
 	esac
 
+.PHONY: sonarqube
+sonarqube:
+	@case "$(word 2, $(MAKECMDGOALS))" in \
+		up) docker compose --env-file ./docker/config/sonarqube/.env -f ./docker/config/sonarqube/compose.yml up -d ;; \
+		down) docker compose -f ./docker/config/sonarqube/compose.yml down ;; \
+		restart) docker compose -f ./docker/config/sonarqube/compose.yml restart ;; \
+		*) echo "Usage: make sonarqube [up|down|restart]"; exit 1 ;; \
+	esac
+
 .PHONY: beszel
 beszel:
 	@case "$(word 2, $(MAKECMDGOALS))" in \
@@ -115,13 +124,19 @@ postgres:
 		up) docker compose --env-file ./docker/config/postgres/.env -f ./docker/config/postgres/compose.yml up -d ;; \
 		down) docker compose -f ./docker/config/postgres/compose.yml down ;; \
 		restart) docker compose -f ./docker/config/postgres/compose.yml restart ;; \
-		db) \
+		add) \
 			if [ -z "$(word 3, $(MAKECMDGOALS))" ]; then \
-				echo "Usage: make postgres db SOME_DB_NAME"; exit 1; \
+				echo "Usage: make postgres add SOME_DB_NAME"; exit 1; \
 			else \
 				bash ./docker/config/postgres/init-db.sh $(word 3, $(MAKECMDGOALS)); \
 			fi ;; \
-		*) echo "Usage: make postgres [up|down|restart|db]"; exit 1 ;; \
+		remove) \
+			if [ -z "$(word 3, $(MAKECMDGOALS))" ]; then \
+				echo "Usage: make postgres remove SOME_DB_NAME"; exit 1; \
+			else \
+				bash ./docker/config/postgres/remove-db.sh $(word 3, $(MAKECMDGOALS)); \
+			fi ;; \
+		*) echo "Usage: make postgres [up|down|restart|add|remove]"; exit 1 ;; \
 	esac
 
 .PHONY: redis

@@ -2,7 +2,7 @@
 
 SUPERUSER=code
 USER=$1
-PASSWORD=$(openssl rand -base64 16)
+PASSWORD=$(openssl rand -hex 32)
 
 docker exec -i postgres psql -U ${SUPERUSER} <<EOF
 CREATE USER $USER WITH PASSWORD '$PASSWORD';
