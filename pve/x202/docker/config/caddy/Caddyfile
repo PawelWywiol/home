@@ -63,7 +63,7 @@
 
     @glitchtip host glitchtip.local.wywiol.eu
     handle @glitchtip {
-        reverse_proxy http://glitchtip-web:8000
+        reverse_proxy http://glitchtip_web:8000
     }
 
     @wakapi host wakapi.local.wywiol.eu

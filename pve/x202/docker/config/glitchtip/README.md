@@ -8,6 +8,16 @@
 
 ### SuperUser
 
+To create a superuser for the GlitchTip application, run the following command:
+
 ```shell
-docker-compose run glitchtip-migrate ./manage.py createsuperuser
+docker-compose run glitchtip_migrate ./manage.py createsuperuser
+```
+
+or login to the glitchtip_migrate container and run the command directly:
+
+```shell
+docker exec -it glitchtip_migrate /bin/bash
+
+./manage.py createsuperuser
 ```
